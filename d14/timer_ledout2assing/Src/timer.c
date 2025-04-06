@@ -1,0 +1,32 @@
+/*
+ * timer.c
+ *
+ *  Created on: Apr 4, 2025
+ *      Author: sunbeam
+ */
+#include"timer.h"
+
+void TimerInit(void)
+{
+RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+GPIOD->MODER |= BV(12*2+1) | BV(13*2+1)| BV(14*2+1) | BV(15*2+1);
+GPIOD->MODER &= ~(BV(12*2) | BV(13*2) | BV(14*2)| BV(15*2));
+GPIOD->PUPDR &= ~(BV(12*2) | BV(13*2) | BV(14*2) | BV(15*2) | BV(12*2+1) | BV(13*2+1) | BV(14*2+1) | BV(15*2+1));
+GPIOD->AFR[1] = (2 << 16) | (2 << 20 ) | (2 << 24 ) |(2 << 28);
+
+RCC->APB1ENR |= RCC_APB1ENR_TIM4EN;
+TIM4->PSC = TIM_PR-1;
+TIM4->ARR = 500;
+
+TIM4->CCR1 = 400;
+TIM4->CCR2 = 300;
+TIM4->CCR3 = 200;
+TIM4->CCR4 = 100;
+
+TIM4->CCMR1 |= TIM_CCMR1_OC1M_0 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC2M_0 | TIM_CCMR1_OC2M_1;
+	TIM4->CCMR2 |= TIM_CCMR2_OC3M_0 | TIM_CCMR2_OC3M_1 | TIM_CCMR2_OC4M_0 | TIM_CCMR2_OC4M_1;
+TIM4->CCER |= TIM_CCER_CC1E | TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
+TIM4->CR1 |= TIM_CR1_CEN;
+
+}
+
